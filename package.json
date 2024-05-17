@@ -5,12 +5,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "tsc -w",
+    "start": "node ./dist/translate.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "commander": "^12.0.0",
-    "glob": "^10.3.15"
+    "figlet": "^1.7.0",
+    "glob": "^10.3.15",
+    "openai": "^4.47.1"
+  },
+  "devDependencies": {
+    "@commander-js/extra-typings": "^12.0.1",
+    "@types/figlet": "^1.5.8",
+    "@types/node": "^20.12.12",
+    "typescript": "^5.4.5"
   }
 }

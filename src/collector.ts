@@ -1,7 +1,11 @@
 import { glob } from "glob";
 
 export class FileCollector {
-  constructor(directory, fileType = "md") {
+  public directory: string;
+  public fileType: string;
+  public files: string[];
+
+  constructor(directory: string, fileType = "md") {
     this.directory = directory;
     this.fileType = fileType;
     this.files = [];
@@ -16,7 +20,7 @@ export class FileCollector {
     }
   }
 
-  async _traverseDirectory(dir) {
+  private async _traverseDirectory(dir: string) {
     console.log(dir);
     const files = await glob(dir, { ignore: "node_modules/**" });
 
