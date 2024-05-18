@@ -43,14 +43,18 @@ program
     const updatedContent = updateTextWithDecodedBase64(content);
     // console.log({ updatedContent });
 
-    // const res = await openai.chat.completions.create({
-    //   messages: [
-    //     { role: "system", content: systemPromp },
-    //     { role: "user", content: updatedContent },
-    //   ],
-    //   model: "gpt-4o",
-    // });
-    // console.log({ res: JSON.stringify(res) });
+    const res = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: systemPromp },
+        { role: "user", content: updatedContent },
+      ],
+      model: "gpt-4o",
+    });
+    console.log({ res: JSON.stringify(res) });
+
+    const encodedTextRegex = `/${sign}.*?${sign}/gs`;
+    const matches = res.choices[0].message.content?.match(encodedTextRegex);
+    //TODO: encode matches and replace in place
 
     // await writeFile(filePath, updatedContent, "utf-8");
   });
@@ -63,9 +67,11 @@ const base64Pattern =
 
 // Function to extract Base64 strings
 function extractBase64Strings(text: string): string[] {
-  const matches = text.match(base64Pattern);
+  const matches = text
+    .match(base64Pattern)
+    ?.filter((text) => text.split("").length > 0 && text.length > 60);
 
-  return matches ? matches : [];
+  return matches ?? [];
 }
 
 // Function to decode Base64 to normal text
@@ -86,12 +92,12 @@ function updateTextWithDecodedBase64(text: string): string {
 
   console.log({ length: base64Strings.length });
 
-  base64Strings.forEach((base64) => {
-    // console.log({ base64 });
-
-    const decoded = decodeBase64(base64);
-    updatedText = updatedText.replace(base64, decoded);
-  });
+  base64Strings
+    .filter((base64) => base64.split("").length > 0)
+    .forEach((base64) => {
+      const decoded = sign.concat(decodeBase64(base64)).concat(sign);
+      updatedText = updatedText.replace(base64, decoded);
+    });
 
   return updatedText;
 }
