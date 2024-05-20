@@ -1,14 +1,23 @@
 import { glob } from "glob";
+import { access, mkdir } from "node:fs/promises";
+import path from "node:path";
+type File = {
+  fileName: string;
+  absolutePath: string;
+  newPath: string;
+};
 
 export class FileCollector {
   public directory: string;
   public fileType: string;
-  public files: string[];
+  public files: File[];
+  public to: string;
 
-  constructor(directory: string, fileType = "md") {
+  constructor(directory: string, to: string, fileType = "md") {
     this.directory = directory;
     this.fileType = fileType;
     this.files = [];
+    this.to = to;
   }
 
   async collectFiles() {
@@ -21,13 +30,35 @@ export class FileCollector {
   }
 
   private async _traverseDirectory(dir: string) {
-    console.log(dir);
-    const files = await glob(dir, { ignore: "node_modules/**" });
+    const files = await glob(`**/*.${this.fileType}`, {
+      cwd: dir,
+      ignore: "node_modules/**",
+      absolute: true,
+    });
 
     for (const entry of files) {
       if (entry.endsWith(this.fileType)) {
-        this.files.push(entry);
+        const writeTo = path.join(entry, "../..", this.to);
+
+        const isPathExist = await this.#checkPathExists(writeTo);
+        if (!isPathExist) {
+          await mkdir(writeTo, { recursive: true });
+        }
+        this.files.push({
+          fileName: path.basename(entry),
+          absolutePath: entry,
+          newPath: writeTo,
+        });
       }
+    }
+  }
+
+  async #checkPathExists(filePath: string): Promise<boolean> {
+    try {
+      await access(filePath);
+      return true;
+    } catch (err) {
+      return false;
     }
   }
 }
