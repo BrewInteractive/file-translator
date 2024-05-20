@@ -16,12 +16,12 @@ program
   .version("0.0.1");
 
 program
-  .option("-d, --dir [dir]", "glob pattern match of files")
+  .argument("d, dir <dir>", "glob pattern match of files")
   .argument("f, from <from>", "the language translate from")
   .argument("t, to <to...>", "the language translate from")
-  .action(async (from, to) => {
+  .action(async (dir, from, to) => {
     const ai = new AI();
-    ai.translateAndWriteToFile(from, to, ".");
+    ai.translateAndWriteToFile(from, to, dir);
   });
 
 program.parse();
