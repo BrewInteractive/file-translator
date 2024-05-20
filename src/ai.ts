@@ -11,8 +11,8 @@ export class AI {
   #client: OpenAI;
 
   constructor() {
-    this.#apiKey = "";
-    this.#organizationKey = ""; //TODO: these will be come from env
+    this.#apiKey = process.env.API_KEY!;
+    this.#organizationKey = process.env.ORG_KEY!;
     this.#client = new OpenAI({
       apiKey: this.#apiKey,
       organization: this.#organizationKey,
