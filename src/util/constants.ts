@@ -1,1 +1,1 @@
-export const SIGN = "__b*__";
+export const SIGN = "__b_decoded__";

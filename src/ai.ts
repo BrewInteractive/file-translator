@@ -34,13 +34,12 @@ export class AI {
           return parser.decodeBase64(text);
         },
       });
-
       const res = await this.#client.chat.completions.create({
         messages: [
           { role: "system", content: this.#getSystemProp(from, to) },
           { role: "user", content: replacedText },
         ],
-        model: "gpt-4o",
+        model: "gpt-3.5-turbo",
       });
 
       if (res.choices[0].message.content) {
