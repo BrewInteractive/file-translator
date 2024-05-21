@@ -7,16 +7,25 @@ type File = {
   newPath: string;
 };
 
+type FileCollectorArgs = {
+  directory: string;
+  from: string;
+  to: string;
+  fileType?: string;
+};
+
 export class FileCollector {
   public directory: string;
   public fileType: string;
   public files: File[];
+  public from: string;
   public to: string;
 
-  constructor(directory: string, to: string, fileType = "md") {
+  constructor({ directory, fileType = "md", from, to }: FileCollectorArgs) {
     this.directory = directory;
     this.fileType = fileType;
     this.files = [];
+    this.from = from;
     this.to = to;
   }
 
@@ -30,7 +39,7 @@ export class FileCollector {
   }
 
   private async _traverseDirectory(dir: string) {
-    const files = await glob(`**/*.${this.fileType}`, {
+    const files = await glob(`**/${this.from}/*.${this.fileType}`, {
       cwd: dir,
       ignore: "node_modules/**",
       absolute: true,
