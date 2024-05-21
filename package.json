@@ -4,12 +4,15 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "file-translator": "./dist/translate.js"
+  },
   "scripts": {
     "dev": "tsc -w",
     "start": "node --env-file=.env ./dist/translate.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Brew Interactive",
   "license": "ISC",
   "dependencies": {
     "commander": "^12.0.0",

@@ -19,41 +19,43 @@ export class AI {
     });
   }
 
-  async translateAndWriteToFile(from: string, to: string, dir: string) {
-    const collector = new FileCollector(dir, to);
+  async translateAndWriteToFile(from: string, to: string, directory: string) {
+    const collector = new FileCollector({ directory, to, from });
     const files = await collector.collectFiles();
+    console.log(files?.length);
 
-    files?.forEach(async (file) => {
-      const content = await readFile(file.absolutePath, "utf8");
-
-      const parser = new Parser();
-      const replacedText = parser.replaceText({
-        text: content,
-        pattern: Regexp.base64,
-        replaceWith: (text) => {
-          return parser.decodeBase64(text);
-        },
-      });
-      const res = await this.#client.chat.completions.create({
-        messages: [
-          { role: "system", content: this.#getSystemProp(from, to) },
-          { role: "user", content: replacedText },
-        ],
-        model: "gpt-3.5-turbo",
-      });
-
-      if (res.choices[0].message.content) {
-        const translatedText = parser.replaceText({
-          text: res.choices[0].message.content,
-          pattern: Regexp.sign,
+    files?.forEach(async (file, index) => {
+      setTimeout(async () => {
+        const content = await readFile(file.absolutePath, "utf8");
+        const parser = new Parser();
+        const replacedText = parser.replaceText({
+          text: content,
+          pattern: Regexp.base64,
           replaceWith: (text) => {
-            return parser.encodeBase64(text);
+            return parser.decodeBase64(text);
           },
         });
+        const res = await this.#client.chat.completions.create({
+          messages: [
+            { role: "system", content: this.#getSystemProp(from, to) },
+            { role: "user", content: replacedText },
+          ],
+          model: "gpt-4o",
+        });
 
-        const newFilePath = path.join(file.newPath, file.fileName);
-        await writeFile(newFilePath, translatedText, "utf-8");
-      }
+        if (res.choices[0].message.content) {
+          const translatedText = parser.replaceText({
+            text: res.choices[0].message.content,
+            pattern: Regexp.sign,
+            replaceWith: (text) => {
+              return parser.encodeBase64(text);
+            },
+          });
+
+          const newFilePath = path.join(file.newPath, file.fileName);
+          await writeFile(newFilePath, translatedText, "utf-8");
+        }
+      }, (index + 1) * 2000);
     });
   }
 

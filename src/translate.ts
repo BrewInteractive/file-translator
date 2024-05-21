@@ -1,10 +1,8 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 
 import { Command } from "@commander-js/extra-typings";
 import figlet from "figlet";
 import { AI } from "./ai.js";
-
-const ai = new AI();
 
 console.log(figlet.textSync("Brew File Translator"));
 
@@ -16,12 +14,24 @@ program
   .version("0.0.1");
 
 program
-  .argument("d, dir <dir>", "glob pattern match of files")
-  .argument("f, from <from>", "the language translate from")
-  .argument("t, to <to...>", "the language translate from")
-  .action(async (dir, from, to) => {
+  .option("-d, --dir <dir>", "glob pattern match of files")
+  .option("-f, --from <from>", "the language translate from")
+  .option("-t, --to <to...>", "the language translate from")
+  .action(async (options, command) => {
+    console.log({ options });
+
+    if (
+      !options.dir ||
+      !options.from ||
+      !options.to ||
+      options.to.length === 0
+    ) {
+      console.log("please enter from, to, dir");
+
+      return;
+    }
     const ai = new AI();
-    ai.translateAndWriteToFile(from, to, dir);
+    ai.translateAndWriteToFile(options.from, options.to[0], options.dir);
   });
 
 program.parse();
