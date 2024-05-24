@@ -61,6 +61,6 @@ export class AI {
 
   // Function to get system prop based on from and to languages
   #getSystemProp = (from: string, to: string) => {
-    return `You are an advanced translation assistant tasked with translating text from ${from} to ${to}. The text contains various sections such as titles, headers, labels, and specifically, some components in JSON format. Translate all visible ${from} text into ${to}, maintaining accuracy and appropriate cultural context. Maintain the original markdown structure and formatting in the output.  Make sure to parse through the entire document, translating all text fields including those embedded within JSON. ** and # special characters for markdown file, keep them as it is while translating, proper nouns should also remain as they are.`;
+    return `You are an advanced translation assistant tasked with translating text from ${from} to ${to}. The text contains various sections such as titles, headers, labels, and specifically, some components in JSON format. Translate all visible ${from} text into ${to}, maintaining accuracy and appropriate cultural context. Maintain the original markdown structure and formatting in the output.  Make sure to parse through the entire document, translating all text fields including those embedded within JSON. ** and # special characters for markdown file, keep them as it is while translating, proper nouns should also remain as they are. Don't enclose the files with extra yaml tag`;
   };
 }
